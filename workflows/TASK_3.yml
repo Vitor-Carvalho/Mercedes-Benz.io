@@ -1,0 +1,58 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/Vitor-Carvalho/Mercedes-Benz.io.git'
+            }
+        }
+        
+        stage('Setup Environment') {
+            steps {
+                sh 'chmod +x chromedriver_linux64.zip'
+                sh './chromedriver_linux64.zip'
+                // Download and setup ChromeDriver
+            }
+        }
+        
+        stage('Run Tests') {
+            matrix {
+                axes {
+                    axis {
+                        name 'BROWSER'
+                        values 'chrome', 'edge'
+                    }
+                }
+                stages {
+                    stage('Test') {
+                        steps {
+                            script {
+                                def driver
+                                if (env.BROWSER == 'chrome') {
+                                    driver = new ChromeDriver()
+                                } else if (env.BROWSER == 'edge') {
+                                    driver = new EdgeDriver()
+                                }
+                                try {
+                                    sh 'mvn clean test'
+                                } finally {
+                                    driver.quit()
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo 'Tests passed successfully!'
+        }
+        failure {
+            echo 'Tests failed!'
+        }
+    }
+}
