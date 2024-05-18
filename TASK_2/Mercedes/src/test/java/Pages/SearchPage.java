@@ -11,6 +11,9 @@ import org.openqa.selenium.support.ui.Select;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.Assert;
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.SearchContext;
+
+
 
 
 public class SearchPage {
@@ -19,8 +22,10 @@ public class SearchPage {
 
 
 	//Locators
-	private By accept_cookies = By.xpath("/html/body/div/div[1]/cmm-cookie-banner//div/div/div[2]/cmm-buttons-wrapper/div/div/wb7-button[2]");
+	private By accept_cookies_banner = By.xpath("//div/div[@class='cmm-cookie-banner__content']");
 
+	private By accept_cookies_button = By.xpath("//wb7-button[@class=\"button button--accept-all wb-button hydrated\"][2]");
+	
 	private By state_box = By.xpath("//wb-select-control[@class='dcp-header-location-modal-dropdown hydrated']");
 	
 	private By postal_code = By.xpath("//input[@aria-labelledby='postal-code-hint']");
@@ -74,8 +79,34 @@ public class SearchPage {
 
     //Methods
     public void accept_cookies() {
-    //manual
-    new WebDriverWait(driver,Duration.ofSeconds(20)).until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/cmm-cookie-banner//div/div/div[2]")));
+    
+    /*
+    	// Find the shadow host element
+        WebElement shadowHost = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/cmm-cookie-banner"));
+
+        // Get the shadow root using JavaScript
+        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
+        //WebElement shadowRoot = (WebElement) jsExecutor.executeScript("return arguments[0].shadowRoot", shadowHost);
+        SearchContext shadowRoot = (SearchContext) jsExecutor.executeScript("return arguments[0].shadowRoot", shadowHost);
+     
+        
+        // Find the "Edit" button for the first employee within the shadow DOM
+        WebElement Button = shadowRoot.findElement(accept_cookies_button);
+        
+        // Click the button
+        Button.click();
+
+        // Wait for a while to observe the click action
+        try {
+            Thread.sleep(2000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+	
+    */
+    		
+        //manual
+        new WebDriverWait(driver,Duration.ofSeconds(20)).until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/cmm-cookie-banner//div/div/div[2]")));
     	
    }
 
