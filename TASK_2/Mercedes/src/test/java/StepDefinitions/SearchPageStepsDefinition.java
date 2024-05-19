@@ -49,7 +49,6 @@ public class SearchPageStepsDefinition {
 
 	@When("I filter for Pre-Owned cars with colour {string}")
 	public void i_filter_for_pre_owned_cars_with_colour(String color) {
-		driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
 		searchPage.filter_cars(color);
 		searchPage.sort_list();
 	}
@@ -63,10 +62,4 @@ public class SearchPageStepsDefinition {
 	public void i_get_a_proper_error_indicating_the_reason() {
 		searchPage.validate_error();
 	}
-
-	
-	
-	
-	
-	
 }
