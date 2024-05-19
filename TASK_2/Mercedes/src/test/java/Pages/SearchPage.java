@@ -14,17 +14,15 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.SearchContext;
 
 
-
-
 public class SearchPage {
 
 	private WebDriver driver;
 
 
 	//Locators
-	private By accept_cookies_banner = By.xpath("//div/div[@class='cmm-cookie-banner__content']");
+	private By accept_cookies_banner = By.xpath("//*[@id=\"app\"]/div[1]/cmm-cookie-banner");
 
-	private By accept_cookies_button = By.xpath("//wb7-button[@class=\"button button--accept-all wb-button hydrated\"][2]");
+	private By accept_cookies_button = By.cssSelector("div > div > div.cmm-cookie-banner__content > cmm-buttons-wrapper > div > div > wb7-button.button.button--accept-all.wb-button.hydrated");
 	
 	private By state_box = By.xpath("//wb-select-control[@class='dcp-header-location-modal-dropdown hydrated']");
 	
@@ -36,7 +34,7 @@ public class SearchPage {
 	
 	private By continue_location_button = By.xpath("//*[@id=\"app\"]/div[1]/header/div/div[4]/div[1]/div/div[2]/button");
 
-	private By filter = By.xpath("//div[@class='sidebar-filter']");
+	private By filter = By.xpath("//span[@class='filter-toggle']");
 
 	private By pre_owned_tab = By.xpath("//button[@class=\"wb-button wb-button--tertiary wb-button--medium\"]");
 
@@ -79,42 +77,14 @@ public class SearchPage {
 
     //Methods
     public void accept_cookies() {
-    
-    /*
-    	// Find the shadow host element
-        WebElement shadowHost = driver.findElement(By.xpath("//*[@id=\"app\"]/div[1]/cmm-cookie-banner"));
-
-        // Get the shadow root using JavaScript
-        JavascriptExecutor jsExecutor = (JavascriptExecutor) driver;
-        //WebElement shadowRoot = (WebElement) jsExecutor.executeScript("return arguments[0].shadowRoot", shadowHost);
-        SearchContext shadowRoot = (SearchContext) jsExecutor.executeScript("return arguments[0].shadowRoot", shadowHost);
-     
-        
-        // Find the "Edit" button for the first employee within the shadow DOM
-        WebElement Button = shadowRoot.findElement(accept_cookies_button);
-        
-        // Click the button
-        Button.click();
-
-        // Wait for a while to observe the click action
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-	
-    */
-    		
-        //manual
-        new WebDriverWait(driver,Duration.ofSeconds(20)).until(ExpectedConditions.invisibilityOfElementLocated(By.xpath("//*[@id=\"app\"]/div[1]/cmm-cookie-banner//div/div/div[2]")));
-    	
+    	WebElement shadowHost = driver.findElement(accept_cookies_banner);
+    	SearchContext shadowRoot = shadowHost.getShadowRoot();
+    	shadowRoot.findElement(accept_cookies_button).click();
    }
 
     public void select_state(String state) {
     	new WebDriverWait(driver, Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(state_box)).click();
-    	
         driver.findElement(By.xpath("//*[text()='"+state+"']")).click();
-        driver.findElement(state_box).click();
     }
 
     public void enter_postal_code(String code) {
@@ -134,77 +104,80 @@ public class SearchPage {
     }
 
     public void filter_cars(String color)  {
-    	new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(filter)).click();
+    	new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(filter));
+    	JavascriptExecutor js = (JavascriptExecutor)driver;
+    	WebElement f = driver.findElement(filter);
+        js.executeScript("arguments[0].click();", f);
         
-        new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(pre_owned_tab)).click();
+        new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(pre_owned_tab));
+    	WebElement pre = driver.findElement(pre_owned_tab);
+        js.executeScript("arguments[0].click();", pre);
         
-        WebElement w = driver.findElement(color_filter);
-
+        WebElement cf = driver.findElement(color_filter);
         // Scrolling down the page till the element is found	
-        JavascriptExecutor jse = (JavascriptExecutor)driver;
-        jse.executeScript("arguments[0].scrollIntoView();", w);
+        js.executeScript("arguments[0].scrollIntoView();", cf);
+        js.executeScript("arguments[0].click();", cf);
+             
+        WebElement cb = driver.findElement(color_box);
+        // Scrolling down the page till the element is found	
+        js.executeScript("arguments[0].scrollIntoView();", cb);
+        js.executeScript("arguments[0].click();", cb);
         
-        new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(color_filter)).click();
-    	 
-        new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(color_box)).click();
-        
-        new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(By.xpath("//*[text()=\" "+color+" \"]"))).click();
-  }
+        WebElement c = driver.findElement(By.xpath("//*[text()=\" "+color+" \"]"));
+        js.executeScript("arguments[0].click();", c);
+    }
     
     public void sort_list() {
         Select dropdown = new Select(driver.findElement(sorting_box));
         dropdown.selectByVisibleText(" Price (descending) "); 
-    }
+        }
     
     public void enquire_most_expensive() {
     	new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(result));
     	
+    	JavascriptExecutor js = (JavascriptExecutor)driver;
+    	WebElement car;
+    	
     	try {
-    	    WebElement car = driver.findElement(result);
-    	            car.click();
+    		car = driver.findElement(result);	
+    		car.click();
     	}
     	catch(org.openqa.selenium.StaleElementReferenceException ex)
     	{
-    	    WebElement car = driver.findElement(result);
-    	            car.click();
+    	    car = driver.findElement(result);	
+    	    car.click();
     	}
     	
     	new WebDriverWait(driver,Duration.ofSeconds(10)).until(ExpectedConditions.elementToBeClickable(enquire_button));
     	write_data();
-    	driver.findElement(enquire_button).click();
-    	
-    	
-    	WebElement w;
-    	try {
-             w = driver.findElement(contact_proceed_button);      
-    	}
-    	catch(org.openqa.selenium.StaleElementReferenceException ex)
-    	{
-             w = driver.findElement(contact_proceed_button);
-    	}
-
-        // Scrolling down the page till the element is found	    
-        JavascriptExecutor jse = (JavascriptExecutor)driver;
-        jse.executeScript("arguments[0].scrollIntoView();", w);
-        
-        //driver.findElement(contact_first_name).sendKeys("FIRST");
+    	WebElement enquire = driver.findElement(enquire_button);
+        js.executeScript("arguments[0].click();", enquire);
+         	
+    	//driver.findElement(contact_first_name).sendKeys("FIRST");
     	//driver.findElement(contact_last_name).sendKeys("LAST");
     	//driver.findElement(contact_email).sendKeys("me@com");
     	//driver.findElement(contact_phone).sendKeys("0441234567");
     	//driver.findElement(contact_postal_code).sendKeys("4400");
     	//driver.findElement(contact_privacy).click();
         
-        WebElement element = driver.findElement(contact_proceed_button);
-        JavascriptExecutor js = (JavascriptExecutor)driver;
-        js.executeScript("arguments[0].click();", element);
-        
+    	WebElement button;
+    	try {
+    		button = driver.findElement(contact_proceed_button);      
+    	}
+    	catch(org.openqa.selenium.StaleElementReferenceException ex)
+    	{
+    		button = driver.findElement(contact_proceed_button);
+    	}
+
+        // Scrolling down the page till the element is found	    
+        js.executeScript("arguments[0].scrollIntoView();", button);
+        js.executeScript("arguments[0].click();", button);
     }
     
     public void validate_error() {
     	String actualMsg=driver.findElement(error_message).getText().trim();
     	Assert.assertEquals(actualMsg,"Please check the data you entered.");
     }
-    
     
     private void write_data() {
     	
@@ -225,6 +198,4 @@ public class SearchPage {
             e.printStackTrace();
         }
     }
-
-
 }
