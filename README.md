@@ -1,7 +1,7 @@
 # Mercedes-Benz.io
 
 TASK_2:  
-To run the tests it is needed to manually accept the cookies by pressing the 'Agree to all' button on the browser as selenium can´t find the button on the cookies banner (in the shadow-root).  
+To run the tests it is recommended that you use a screen resolution of at least 1920x1080.  
 It was created a feature file containing the scenario under test and a steps definition file for the implementation of each step of the scenario. A SearchPage class was also created to keep the locators and methods of that page (page object model).  
 It was created a TestRunner based on TestNG which allow us to run the tests from the terminal and generates a HTML report (under 'target' folder).  
 
